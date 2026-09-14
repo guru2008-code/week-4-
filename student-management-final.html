@@ -1,0 +1,148 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Student Management System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{background:radial-gradient(circle at top left,rgba(56,189,248,.2),transparent 35%),linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);min-height:100vh;color:#111827}
+
+/* Login */
+#loginPage{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.hero{display:flex;align-items:center;gap:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(14px);border-radius:28px;padding:26px 34px;margin-bottom:26px;max-width:460px}
+.hero-image{font-size:56px}
+.hero h1{font-size:1.6rem;color:#f8fafc;margin-bottom:8px}
+.hero p{color:#dbeafe;font-size:.95rem;line-height:1.5}
+.login-box{background:rgba(255,255,255,.96);max-width:380px;width:100%;padding:32px;border-radius:24px;box-shadow:0 26px 80px rgba(15,23,42,.14);text-align:center}
+.login-box h2{color:#111827;margin-bottom:18px}
+input,select{width:100%;padding:13px 16px;margin:8px 0;border:1px solid #d1d5db;border-radius:14px;background:#f8fafc;font-size:15px}
+input:focus,select:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px rgba(59,130,246,.16)}
+button{width:100%;padding:13px 16px;margin-top:10px;background:linear-gradient(135deg,#2563eb,#60a5fa);color:#fff;border:none;border-radius:14px;cursor:pointer;font-size:15px;transition:.2s}
+button:hover{transform:translateY(-1px);box-shadow:0 14px 24px rgba(37,99,235,.24)}
+#msg{color:#fca5a5;margin-top:8px;font-weight:600}
+
+/* Dashboard */
+#dashboard{display:none}
+.topbar{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.18);padding:18px 26px;border-bottom:1px solid rgba(255,255,255,.25);backdrop-filter:blur(10px)}
+.topbar h2{color:#f8fafc}
+.logout{width:auto;background:#ef4444;padding:10px 18px;border-radius:12px;font-weight:600}
+.logout:hover{background:#dc2626}
+.layout{display:flex;min-height:calc(100vh - 68px)}
+.sidebar{width:210px;background:rgba(17,24,39,.85);backdrop-filter:blur(10px);padding-top:20px}
+.sidebar a{display:block;color:#e5e7eb;text-decoration:none;padding:14px 22px;cursor:pointer;transition:.2s}
+.sidebar a:hover,.sidebar a.active{background:#2563eb;color:#fff}
+.content{flex:1;padding:28px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:26px}
+.card{padding:22px;border-radius:20px;text-align:center;color:#fff;box-shadow:0 12px 30px rgba(15,23,42,.18)}
+.card:nth-child(1){background:#2563eb}.card:nth-child(2){background:#198754}
+.card:nth-child(3){background:#ffc107;color:#000}.card:nth-child(4){background:#dc3545}
+.card h2{font-size:32px}
+
+.panel{background:rgba(255,255,255,.97);padding:26px;border-radius:22px;box-shadow:0 18px 42px rgba(15,23,42,.1);display:none}
+.panel.active{display:block}
+.panel h2{margin-bottom:14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+table{width:100%;margin-top:16px;border-collapse:separate;border-spacing:0}
+table th,table td{padding:12px 14px;text-align:center;border-bottom:1px solid #e2e8f0}
+table th{background:#2563eb;color:#fff}
+.deleteBtn{width:auto;margin:0;background:#ef4444;padding:8px 14px;border-radius:999px}
+.deleteBtn:hover{background:#b91c1c}
+.course-list{list-style:none;margin:12px 0}
+.course-list li{padding:10px;border-bottom:1px solid #eee}
+</style></head><body>
+
+<div id="loginPage">
+<div class="hero"><div class="hero-image">🎓</div>
+<div><h1>Student Management System</h1><p>Log in to manage students, courses and fees from one dashboard.</p></div></div>
+<div class="login-box"><h2>Admin Login</h2>
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+<button onclick="login()">Login</button><p id="msg"></p></div>
+</div>
+
+<div id="dashboard">
+<div class="topbar"><h2>📋 Dashboard</h2><button class="logout" onclick="logout()">Logout</button></div>
+<div class="layout">
+<div class="sidebar">
+<a onclick="show('home',this)" class="active">Dashboard</a>
+<a onclick="show('student',this)">Students</a>
+<a onclick="show('course',this)">Courses</a>
+</div>
+
+<div class="content">
+<div class="cards">
+<div class="card"><h2 id="c1">0</h2><p>Total Students</p></div>
+<div class="card"><h2 id="c2">5</h2><p>Courses Offered</p></div>
+<div class="card"><h2 id="c3">₹0</h2><p>Fees Collected</p></div>
+<div class="card"><h2 id="c4">0</h2><p>Pending Dues</p></div>
+</div>
+
+<div id="home" class="panel active"><h2>Welcome</h2><p>Manage students, courses and fees — all in one place.</p></div>
+
+<div id="student" class="panel"><h2>Add Student</h2>
+<div class="fields">
+<input type="text" id="sName" placeholder="Student Name">
+<input type="number" id="sAge" placeholder="Age">
+<select id="sCourse"><option>HTML</option><option>CSS</option><option>JavaScript</option><option>Python</option><option>Java</option></select>
+<input type="number" id="sFee" placeholder="Fee Paid">
+</div>
+<button style="width:auto" onclick="addStudent()">Add Student</button>
+<table><thead><tr><th>Name</th><th>Age</th><th>Course</th><th>Fee</th><th>Action</th></tr></thead><tbody id="sTable"></tbody></table>
+</div>
+
+<div id="course" class="panel"><h2>Available Courses</h2>
+<ul class="course-list" id="cList"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>Python</li><li>Java</li></ul>
+<input type="text" id="newCourse" placeholder="New Course">
+<button style="width:auto" onclick="addCourse()">Add Course</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+let students=[], fees=0, courses=5;
+
+function login(){
+  if(username.value=="admin" && password.value=="1234"){
+    loginPage.style.display="none"; dashboard.style.display="block";
+  } else msg.innerHTML="Invalid Login";
+}
+function logout(){location.reload();}
+
+function show(id,el){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  el.classList.add("active");
+}
+
+function addStudent(){
+  const name=sName.value, age=sAge.value, course=sCourse.value, fee=parseFloat(sFee.value)||0;
+  if(!name || !age){alert("Enter all details"); return;}
+  students.push({id:Date.now(), name, age, course, fee});
+  fees+=fee;
+  renderStudents();
+  c1.textContent=students.length; c3.textContent="₹"+fees;
+  sName.value=""; sAge.value=""; sFee.value="";
+}
+
+function deleteStudent(id){
+  const s=students.find(x=>x.id===id);
+  fees-=s.fee;
+  students=students.filter(x=>x.id!==id);
+  renderStudents();
+  c1.textContent=students.length; c3.textContent="₹"+fees;
+}
+
+function renderStudents(){
+  sTable.innerHTML = students.map(s=>`
+    <tr><td>${s.name}</td><td>${s.age}</td><td>${s.course}</td><td>₹${s.fee}</td>
+    <td><button class="deleteBtn" onclick="deleteStudent(${s.id})">Delete</button></td></tr>`).join("");
+}
+
+function addCourse(){
+  if(!newCourse.value) return;
+  cList.innerHTML += `<li>${newCourse.value}</li>`;
+  sCourse.innerHTML += `<option>${newCourse.value}</option>`;
+  courses++; c2.textContent=courses;
+  newCourse.value="";
+}
+</script>
+</body></html>
